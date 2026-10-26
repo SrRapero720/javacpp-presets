@@ -421,6 +421,7 @@ EOF
         make install
         cd ..
         cd ../kvazaar-$KVAZAAR_VERSION
+        sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
         CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=arm-linux
         make -j $MAKEJ V=0
@@ -617,6 +618,7 @@ EOF
         # the shaders get compiled by the glslc of the Vulkan SDK installed on the host
         ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS"
         cd ../kvazaar-$KVAZAAR_VERSION
+        sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
         CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-linux
         make -j $MAKEJ V=0
@@ -793,6 +795,7 @@ EOF
         make install
         cd ..
         cd ../kvazaar-$KVAZAAR_VERSION
+        sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
         CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=i686-linux
         make -j $MAKEJ V=0
@@ -985,6 +988,7 @@ EOF
         # the shaders get compiled by the glslc of the Vulkan SDK installed on the host
         ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS"
         cd ../kvazaar-$KVAZAAR_VERSION
+        sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
         CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=x86_64-linux
         make -j $MAKEJ V=0
