@@ -30,6 +30,23 @@ SRT_CONFIG="-DENABLE_APPS:BOOL=OFF -DENABLE_ENCRYPTION:BOOL=ON -DENABLE_SHARED:B
 WEBP_CONFIG="-DWEBP_BUILD_ANIM_UTILS=OFF -DWEBP_BUILD_CWEBP=OFF -DWEBP_BUILD_DWEBP=OFF -DWEBP_BUILD_EXTRAS=OFF -DWEBP_BUILD_GIF2WEBP=OFF -DWEBP_BUILD_IMG2WEBP=OFF -DWEBP_BUILD_VWEBP=OFF -DWEBP_BUILD_WEBPINFO=OFF -DWEBP_BUILD_WEBPMUX=OFF -DWEBP_BUILD_WEBP_JS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib"
 LIBAOM_CONFIG="-DENABLE_TESTS:BOOL=OFF -DENABLE_TESTDATA:BOOL=OFF -DENABLE_TOOLS:BOOL=OFF -DENABLE_EXAMPLES:BOOL=OFF -DENABLE_DOCS:BOOL=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DCMAKE_INSTALL_BINDIR=bin"
 LIBSVTAV1_CONFIG="-DBUILD_APPS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DCMAKE_INSTALL_BINDIR=bin"
+SHADERC_CONFIG="-DSHADERC_SKIP_TESTS=ON -DSHADERC_SKIP_EXAMPLES=ON -DSHADERC_SKIP_COPYRIGHT_CHECK=ON -DSHADERC_ENABLE_WERROR_COMPILE=OFF -DENABLE_GLSLANG_BINARIES=OFF -DGLSLANG_TESTS=OFF -DSPIRV_SKIP_EXECUTABLES=ON -DSPIRV_SKIP_TESTS=ON -DSPIRV_WERROR=OFF -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_INSTALL_INCLUDEDIR=include -DCMAKE_INSTALL_BINDIR=bin"
+LIBPLACEBO_CONFIG="--default-library=static --buildtype=release --libdir=lib -Dvulkan=enabled -Dvk-proc-addr=disabled -Dshaderc=enabled -Dglslang=disabled -Dopengl=disabled -Dd3d11=disabled -Dlcms=disabled -Dlibdovi=disabled -Dxxhash=disabled -Dunwind=disabled -Ddemos=false -Dtests=false"
+
+# shaderc (glslc for the Vulkan filters, libshaderc for libplacebo) with the glslang, SPIRV-Tools, and SPIRV-Headers revisions pinned by its DEPS file
+SHADERC_VERSION=2026.4
+GLSLANG_COMMIT=e1b562a8bed273a02f30b59b66a5d499793cede5
+SPIRV_TOOLS_COMMIT=ef96ed763b43b59b33b31b362f09a02b729fa1c9
+SPIRV_HEADERS_COMMIT=04fd3caa1e8267e4d95c806cad901181728e1006
+# libplacebo with the revisions of the submodules it needs from its 3rdparty directory
+LIBPLACEBO_VERSION=7.387.0
+VULKAN_HEADERS_COMMIT=74d8a6cb930c68ef617b202c3ff3c59d919e086b
+FAST_FLOAT_COMMIT=97b54ca9e75f5303507699d27c6b4f4efe4641a1
+JINJA_COMMIT=15206881c006c79667fe5154fe80c01c65410679
+MARKUPSAFE_COMMIT=297fc8e356e6836a62087949245d09a28e9f1b13
+# AMF headers (only amf/public/include gets checked out) and mingw-w64 release with d3d12video.h for ID3D12VideoProcessor
+AMF_VERSION=1.5.3
+MINGW_VERSION=14.0.0
 
 NASM_VERSION=3.02
 ZLIB=zlib-1.3.2
@@ -85,6 +102,15 @@ download https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v$SVTAV1_VERSION/SVT-
 download https://github.com/sekrit-twc/zimg/archive/refs/tags/release-$ZIMG_VERSION.tar.gz zimg-release-$ZIMG_VERSION.tar.gz
 download https://github.com/rockchip-linux/mpp/archive/refs/tags/$MPP_VERSION.tar.gz mpp-$MPP_VERSION.tar.gz
 download https://ffmpeg.org/releases/ffmpeg-$FFMPEG_VERSION.tar.bz2 ffmpeg-$FFMPEG_VERSION.tar.bz2
+download https://github.com/google/shaderc/archive/refs/tags/v$SHADERC_VERSION.tar.gz shaderc-$SHADERC_VERSION.tar.gz
+download https://github.com/KhronosGroup/glslang/archive/$GLSLANG_COMMIT.tar.gz glslang-$GLSLANG_COMMIT.tar.gz
+download https://github.com/KhronosGroup/SPIRV-Tools/archive/$SPIRV_TOOLS_COMMIT.tar.gz SPIRV-Tools-$SPIRV_TOOLS_COMMIT.tar.gz
+download https://github.com/KhronosGroup/SPIRV-Headers/archive/$SPIRV_HEADERS_COMMIT.tar.gz SPIRV-Headers-$SPIRV_HEADERS_COMMIT.tar.gz
+download https://github.com/haasn/libplacebo/archive/refs/tags/v$LIBPLACEBO_VERSION.tar.gz libplacebo-$LIBPLACEBO_VERSION.tar.gz
+download https://github.com/KhronosGroup/Vulkan-Headers/archive/$VULKAN_HEADERS_COMMIT.tar.gz Vulkan-Headers-$VULKAN_HEADERS_COMMIT.tar.gz
+download https://github.com/fastfloat/fast_float/archive/$FAST_FLOAT_COMMIT.tar.gz fast_float-$FAST_FLOAT_COMMIT.tar.gz
+download https://github.com/pallets/jinja/archive/$JINJA_COMMIT.tar.gz jinja-$JINJA_COMMIT.tar.gz
+download https://github.com/pallets/markupsafe/archive/$MARKUPSAFE_COMMIT.tar.gz markupsafe-$MARKUPSAFE_COMMIT.tar.gz
 
 mkdir -p $PLATFORM$EXTENSION
 cd $PLATFORM$EXTENSION
@@ -143,6 +169,35 @@ tar --totals -xzf ../SVT-AV1-$SVTAV1_VERSION.tar.gz
 tar --totals -xzf ../zimg-release-$ZIMG_VERSION.tar.gz
 tar --totals -xzf ../mpp-$MPP_VERSION.tar.gz
 tar --totals -xjf ../ffmpeg-$FFMPEG_VERSION.tar.bz2
+tar --totals -xzf ../shaderc-$SHADERC_VERSION.tar.gz
+tar --totals -xzf ../glslang-$GLSLANG_COMMIT.tar.gz
+tar --totals -xzf ../SPIRV-Tools-$SPIRV_TOOLS_COMMIT.tar.gz
+tar --totals -xzf ../SPIRV-Headers-$SPIRV_HEADERS_COMMIT.tar.gz
+tar --totals -xzf ../libplacebo-$LIBPLACEBO_VERSION.tar.gz
+tar --totals -xzf ../Vulkan-Headers-$VULKAN_HEADERS_COMMIT.tar.gz
+tar --totals -xzf ../fast_float-$FAST_FLOAT_COMMIT.tar.gz
+tar --totals -xzf ../jinja-$JINJA_COMMIT.tar.gz
+tar --totals -xzf ../markupsafe-$MARKUPSAFE_COMMIT.tar.gz
+# move the dependencies where the build systems of shaderc and libplacebo expect their submodules
+rm -rf shaderc-$SHADERC_VERSION/third_party/{glslang,spirv-tools,spirv-headers} libplacebo-$LIBPLACEBO_VERSION/3rdparty/{Vulkan-Headers,fast_float,jinja,markupsafe}
+mv glslang-$GLSLANG_COMMIT shaderc-$SHADERC_VERSION/third_party/glslang
+mv SPIRV-Tools-$SPIRV_TOOLS_COMMIT shaderc-$SHADERC_VERSION/third_party/spirv-tools
+mv SPIRV-Headers-$SPIRV_HEADERS_COMMIT shaderc-$SHADERC_VERSION/third_party/spirv-headers
+mv Vulkan-Headers-$VULKAN_HEADERS_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/Vulkan-Headers
+mv fast_float-$FAST_FLOAT_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/fast_float
+mv jinja-$JINJA_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/jinja
+mv markupsafe-$MARKUPSAFE_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/markupsafe
+# the SPIR-V backend of libswscale (FFmpeg 9.0) only needs these two headers
+mkdir -p $INSTALL_PATH/include/spirv/unified1/
+cp shaderc-$SHADERC_VERSION/third_party/spirv-headers/include/spirv/unified1/{spirv.h,GLSL.std.450.h} $INSTALL_PATH/include/spirv/unified1/
+
+if [[ $PLATFORM == windows-* ]]; then
+    # the mingw-w64 headers pinned by the CI predate ID3D12VideoProcessor, which the scale_d3d12 and deinterlace_d3d12 filters need,
+    # so take only d3d12video.h from a newer release
+    download https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.tar.bz2/download mingw-w64-v$MINGW_VERSION.tar.bz2
+    tar --totals -xjf mingw-w64-v$MINGW_VERSION.tar.bz2 mingw-w64-v$MINGW_VERSION/mingw-w64-headers/include/d3d12video.h
+    cp mingw-w64-v$MINGW_VERSION/mingw-w64-headers/include/d3d12video.h $INSTALL_PATH/include/
+fi
 
 if [[ $PLATFORM == android-* ]]; then
     # the Vulkan headers of the NDK (1.3.275 as of r29) are older than the 1.3.277 that FFmpeg requires,
@@ -180,6 +235,13 @@ sedinplace 's/CMAKE_C_COMPILER_ID MATCHES "Clang"/FALSE/g' SVT-AV1-*/CMakeLists.
 # sedinplace 's/defined(__linux__)/defined(__linux__) \&\& !defined(__ANDROID__)/g' SVT-AV1-*/Source/Lib/Common/Codec/EbThreads.h
 sedinplace '/ANativeWindow_release/d' ffmpeg-*/libavutil/hwcontext_mediacodec.c
 sedinplace 's/#define MAX_SLICES 32/#define MAX_SLICES 256/g' ffmpeg-*/libavcodec/h264dec.h
+# ffmpeg.patch disables the glslc probe, but the glslc built below compiles the Vulkan shaders of the filters
+sedinplace '/^if enabled vulkan; then$/{n;s/^    disable spirv_compiler$/    for program in $glslc glslc glslang glslangValidator; do probe_glslc $program \&\& break; done/;}' ffmpeg-$FFMPEG_VERSION/configure
+# FFmpeg 9.0 dropped --enable-libshaderc, its Vulkan filters only need glslc at build time
+ENABLE_VULKAN_FILTERS="--enable-libplacebo"
+if grep -q -- "--enable-libshaderc" ffmpeg-$FFMPEG_VERSION/configure; then
+    ENABLE_VULKAN_FILTERS="$ENABLE_VULKAN_FILTERS --enable-libshaderc"
+fi
 
 case $PLATFORM in
     android-arm)
@@ -525,6 +587,23 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        $CMAKE -DCMAKE_TOOLCHAIN_FILE=${PLATFORM_ROOT}/build/cmake/android.toolchain.cmake -DANDROID_ABI=arm64-v8a -DANDROID_NATIVE_API_LEVEL=24 -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $SHADERC_CONFIG -DSHADERC_SKIP_EXECUTABLES=ON ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH --cross-file=../harfbuzz-$HARFBUZZ_VERSION/android-arm.ini $LIBPLACEBO_CONFIG
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        # the shaders get compiled by the glslc of the Vulkan SDK installed on the host
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS"
         cd ../ffmpeg-$FFMPEG_VERSION
         sedinplace 's/unsigned long int/unsigned int/g' libavdevice/v4l2.c
         LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' ./configure --prefix=.. $DISABLE $ENABLE $EXTRA_CONFIG $ENABLE_VULKAN --enable-jni --enable-mediacodec --enable-pthreads --enable-cross-compile --cross-prefix="$ANDROID_PREFIX-" --ar="$AR" --ranlib="$RANLIB" --cc="$CC" --cxx="$CXX" --strip="$STRIP" --sysroot="$ANDROID_ROOT" --target-os=android --arch=aarch64 --extra-cflags="-I../include/ -I../include/libxml2 -I../include/mfx -I../include/svt-av1 $ANDROID_FLAGS" --extra-ldflags="-L../lib/ $ANDROID_FLAGS" --extra-libs="$ANDROID_LIBS -lz -latomic" --disable-symver --pkg-config=/usr/bin/pkg-config || cat ffbuild/config.log
@@ -866,6 +945,23 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        $CMAKE -DCMAKE_TOOLCHAIN_FILE=${PLATFORM_ROOT}/build/cmake/android.toolchain.cmake -DANDROID_ABI=x86_64 -DANDROID_NATIVE_API_LEVEL=24 -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $SHADERC_CONFIG -DSHADERC_SKIP_EXECUTABLES=ON ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH --cross-file=../harfbuzz-$HARFBUZZ_VERSION/android-amd64.ini $LIBPLACEBO_CONFIG
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        # the shaders get compiled by the glslc of the Vulkan SDK installed on the host
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS"
         cd ../ffmpeg-$FFMPEG_VERSION
         sedinplace 's/unsigned long int/unsigned int/g' libavdevice/v4l2.c
         LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' ./configure --prefix=.. $DISABLE $ENABLE $EXTRA_CONFIG $ENABLE_VULKAN --enable-jni --enable-mediacodec --enable-pthreads --enable-cross-compile --cross-prefix="$ANDROID_PREFIX-" --ar="$AR" --ranlib="$RANLIB" --cc="$CC" --cxx="$CXX" --strip="$STRIP" --sysroot="$ANDROID_ROOT" --target-os=android --arch=atom --extra-cflags="-I../include/ -I../include/libxml2 -I../include/mfx -I../include/svt-av1 $ANDROID_FLAGS" --extra-ldflags="-L../lib/ $ANDROID_FLAGS" --extra-libs="$ANDROID_LIBS -lz -latomic" --disable-symver --pkg-config=/usr/bin/pkg-config || cat ffbuild/config.log
@@ -1178,6 +1274,28 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        CC="gcc -m64" CXX="g++ -m64" $CMAKE -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $SHADERC_CONFIG ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH $LIBPLACEBO_CONFIG
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
+        if [[ ! -d ../AMF-$AMF_VERSION ]]; then
+            git clone --depth 1 --branch v$AMF_VERSION --filter=blob:none --sparse https://github.com/GPUOpen-LibrariesAndSDKs/AMF.git ../AMF-$AMF_VERSION
+            git -C ../AMF-$AMF_VERSION sparse-checkout set amf/public/include
+        fi
+        mkdir -p $INSTALL_PATH/include/AMF
+        cp -a ../AMF-$AMF_VERSION/amf/public/include/. $INSTALL_PATH/include/AMF/
         cd ../ffmpeg-$FFMPEG_VERSION
         LDEXEFLAGS='-Wl,-rpath,\$$ORIGIN/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE $EXTRA_CONFIG $ENABLE_VULKAN --enable-libdrm --enable-cuda --enable-cuvid --enable-nvenc --enable-pthreads --enable-libxcb --enable-libpulse --cc="gcc -m64" --cxx="g++ -m64" --extra-cflags="-I../include/ -I../include/libxml2 -I../include/mfx -I../include/svt-av1 $EXTRA_CFLAGS" --extra-ldflags="-L../lib/ $EXTRA_LDFLAGS" --extra-libs="-lstdc++ -lpthread -ldl -lz -lm $LIBS $EXTRA_LIBS" || cat ffbuild/config.log
         make -j $MAKEJ
@@ -1595,6 +1713,22 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        $CMAKE -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ $SHADERC_CONFIG ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH --cross-file=../harfbuzz-$HARFBUZZ_VERSION/linux-arm.ini $LIBPLACEBO_CONFIG
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
         cd ../mpp-$MPP_VERSION
         mkdir -p build_release
         cd build_release
@@ -2028,6 +2162,22 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        $CMAKE -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_OSX_ARCHITECTURES=arm64 $SHADERC_CONFIG ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH --cross-file=../harfbuzz-$HARFBUZZ_VERSION/macos-arm.ini $LIBPLACEBO_CONFIG
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
         cd ../ffmpeg-$FFMPEG_VERSION
         patch -Np1 < ../../../ffmpeg-macosx.patch
         LDEXEFLAGS='-Wl,-rpath,@loader_path/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE $EXTRA_CONFIG $ENABLE_VULKAN --enable-pthreads --enable-indev=avfoundation --disable-libxcb --cc="clang -arch arm64" --cxx="clang++ -arch arm64" --extra-cflags="-I../include/ -I../include/libxml2 -I../include/mfx -I../include/svt-av1 $EXTRA_CFLAGS" --extra-ldflags="-L../lib/ $EXTRA_LDFLAGS" --extra-libs="-lstdc++ -ldl -lz -lm $EXTRA_LIBS" --enable-cross-compile --arch=arm64 --target-os=darwin || cat ffbuild/config.log
@@ -2168,6 +2318,22 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        $CMAKE -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $SHADERC_CONFIG ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH $LIBPLACEBO_CONFIG
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
         cd ../ffmpeg-$FFMPEG_VERSION
         patch -Np1 < ../../../ffmpeg-macosx.patch
         LDEXEFLAGS='-Wl,-rpath,@loader_path/' PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE $EXTRA_CONFIG $ENABLE_VULKAN --enable-pthreads --enable-indev=avfoundation --disable-libxcb --extra-cflags="-I../include/ -I../include/libxml2 -I../include/mfx -I../include/svt-av1 $EXTRA_CFLAGS" --extra-ldflags="-L../lib/ $EXTRA_LDFLAGS" --extra-libs="-lstdc++ -ldl -lz -lm $EXTRA_LIBS" || cat ffbuild/config.log
@@ -2475,6 +2641,32 @@ EOF
         make -j $MAKEJ
         make install
         cd ..
+        cd ../shaderc-$SHADERC_VERSION
+        mkdir -p build_release
+        cd build_release
+        # MinGW ar cannot open object files whose path exceeds MAX_PATH (the deepest one of SPIRV-Tools is 206 characters below the source root), so let CMake hash the long object names
+        CC="gcc -m64" CXX="g++ -m64" $CMAKE -G "MSYS Makefiles" -DCMAKE_INSTALL_PREFIX=$INSTALL_PATH $SHADERC_CONFIG -DCMAKE_OBJECT_PATH_MAX=200 ..
+        make -j $MAKEJ
+        make install
+        cd ..
+        cp $INSTALL_PATH/lib/pkgconfig/shaderc_combined.pc $INSTALL_PATH/lib/pkgconfig/shaderc.pc
+        cd ../libplacebo-$LIBPLACEBO_VERSION
+        meson setup build --prefix=$INSTALL_PATH $LIBPLACEBO_CONFIG --native-file ../harfbuzz-$HARFBUZZ_VERSION/windows-native.ini -Dcpp_args="-m64" -Dc_args="-m64"
+        cd build
+        meson compile
+        meson install
+        sedinplace 's/^Libs: .*/& -lshaderc_combined/' $INSTALL_PATH/lib/pkgconfig/libplacebo.pc
+        cd ..
+        # libplacebo is linked statically, so its headers must not declare dllimport functions
+        ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
+        EXTRA_CFLAGS="$EXTRA_CFLAGS -DPL_STATIC"
+        EXTRA_LIBS="$EXTRA_LIBS -lshlwapi -ldbghelp"
+        if [[ ! -d ../AMF-$AMF_VERSION ]]; then
+            git clone --depth 1 --branch v$AMF_VERSION --filter=blob:none --sparse https://github.com/GPUOpen-LibrariesAndSDKs/AMF.git ../AMF-$AMF_VERSION
+            git -C ../AMF-$AMF_VERSION sparse-checkout set amf/public/include
+        fi
+        mkdir -p $INSTALL_PATH/include/AMF
+        cp -a ../AMF-$AMF_VERSION/amf/public/include/. $INSTALL_PATH/include/AMF/
         cd ../ffmpeg-$FFMPEG_VERSION
         PKG_CONFIG_PATH=../lib/pkgconfig/ ./configure --prefix=.. $DISABLE $ENABLE $EXTRA_CONFIG $ENABLE_VULKAN --enable-cuda --enable-cuvid --enable-nvenc --enable-libmfx --enable-w32threads --enable-indev=dshow --target-os=mingw32 --cc="gcc -m64" --cxx="g++ -m64" --extra-cflags="-DLIBXML_STATIC -I../include/ -I../include/libxml2 -I../include/mfx/ -I../include/svt-av1 $EXTRA_CFLAGS" --extra-ldflags="-L../lib/ $EXTRA_LDFLAGS" --extra-libs="-static-libgcc -static-libstdc++ -Wl,-Bstatic -lstdc++ -lgcc_eh -lWs2_32 -lcrypt32 -lpthread -lz -lm -Wl,-Bdynamic -lole32 -luuid $EXTRA_LIBS" || cat ffbuild/config.log
         if ! grep -q "^#define HAVE_OPENCL_D3D11 1" config.h; then
