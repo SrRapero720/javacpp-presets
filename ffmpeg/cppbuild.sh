@@ -154,9 +154,9 @@ mv Vulkan-Headers-$VULKAN_HEADERS_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty
 mv fast_float-$FAST_FLOAT_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/fast_float
 mv jinja-$JINJA_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/jinja
 mv markupsafe-$MARKUPSAFE_COMMIT libplacebo-$LIBPLACEBO_VERSION/3rdparty/markupsafe
-# the SPIR-V backend of libswscale only needs this header
+# the SPIR-V backend of libswscale only needs these two headers
 mkdir -p $INSTALL_PATH/include/spirv/unified1/
-cp shaderc-$SHADERC_VERSION/third_party/spirv-headers/include/spirv/unified1/spirv.h $INSTALL_PATH/include/spirv/unified1/
+cp shaderc-$SHADERC_VERSION/third_party/spirv-headers/include/spirv/unified1/{spirv.h,GLSL.std.450.h} $INSTALL_PATH/include/spirv/unified1/
 
 if [[ $PLATFORM == windows-* ]]; then
     # the mingw-w64 headers pinned by the CI predate ID3D12VideoProcessor, which the scale_d3d12 and deinterlace_d3d12 filters need,
