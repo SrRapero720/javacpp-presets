@@ -423,7 +423,7 @@ EOF
         cd ../kvazaar-$KVAZAAR_VERSION
         sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
-        CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=arm-linux
+        CFLAGS="$ANDROID_FLAGS -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=arm-linux
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -620,7 +620,7 @@ EOF
         cd ../kvazaar-$KVAZAAR_VERSION
         sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
-        CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-linux
+        CFLAGS="$ANDROID_FLAGS -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-linux
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -797,7 +797,7 @@ EOF
         cd ../kvazaar-$KVAZAAR_VERSION
         sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
-        CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=i686-linux
+        CFLAGS="$ANDROID_FLAGS -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=i686-linux
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -990,7 +990,7 @@ EOF
         cd ../kvazaar-$KVAZAAR_VERSION
         sedinplace 's/ -lrt"/"/' configure.ac
         ./autogen.sh
-        CFLAGS="$ANDROID_FLAGS" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=x86_64-linux
+        CFLAGS="$ANDROID_FLAGS -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=x86_64-linux
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -1151,7 +1151,7 @@ EOF
         cd ..
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CC="gcc -m32" CFLAGS="-m32 -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=i686-linux
+        CC="gcc -m32" CFLAGS="-m32 -fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=i686-linux
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -1334,7 +1334,7 @@ EOF
         cp -a ../AMF-$AMF_VERSION/amf/public/include/. $INSTALL_PATH/include/AMF/
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CC="gcc -m64" CFLAGS="-m64 -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=x86_64-linux
+        CC="gcc -m64" CFLAGS="-m64 -fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=x86_64-linux
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -1575,7 +1575,7 @@ EOF
         cd ..
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CFLAGS="$CFLAGS -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=arm-linux-gnueabihf
+        CFLAGS="$CFLAGS -fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=arm-linux-gnueabihf
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -1795,7 +1795,7 @@ EOF
         cd ../../ffmpeg-$FFMPEG_VERSION
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CFLAGS="$CFLAGS -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-linux-gnu
+        CFLAGS="$CFLAGS -fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-linux-gnu
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -2049,7 +2049,7 @@ EOF
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
         if [[ "$MACHINE_TYPE" =~ ppc64 ]]; then
-            CC="gcc -m64" CFLAGS="-m64 -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic
+            CC="gcc -m64" CFLAGS="-m64 -fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic
         else
             CFLAGS="-m64 -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=powerpc64le-linux-gnu
         fi
@@ -2241,7 +2241,7 @@ EOF
         ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CC="clang -arch arm64" CFLAGS="-arch arm64 -fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-apple-darwin
+        CC="clang -arch arm64" CFLAGS="-arch arm64 -fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic --host=aarch64-apple-darwin
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -2402,7 +2402,7 @@ EOF
         ENABLE_VULKAN="$ENABLE_VULKAN $ENABLE_VULKAN_FILTERS --glslc=$INSTALL_PATH/bin/glslc"
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CC="clang" CFLAGS="-fPIC" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic
+        CC="clang" CFLAGS="-fPIC -O2" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --with-pic
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -2561,7 +2561,8 @@ EOF
         cd ..
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CC="gcc -m32" CFLAGS="-m32 -DKVZ_STATIC_LIB" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --host=i686-w64-mingw32
+        # GCC on MinGW cannot keep the stack 32-byte aligned for AVX2 code, so let the assembler emit unaligned vector moves (what Kvazaar's configure.ac does itself when $CC matches *gcc)
+        CC="gcc -m32" CFLAGS="-m32 -DKVZ_STATIC_LIB -O2 -Wa,-muse-unaligned-vector-move" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --host=i686-w64-mingw32
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
@@ -2745,7 +2746,8 @@ EOF
         cp -a ../AMF-$AMF_VERSION/amf/public/include/. $INSTALL_PATH/include/AMF/
         cd ../kvazaar-$KVAZAAR_VERSION
         ./autogen.sh
-        CC="gcc -m64" CFLAGS="-m64 -DKVZ_STATIC_LIB" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --host=x86_64-w64-mingw32
+        # GCC on MinGW cannot keep the stack 32-byte aligned for AVX2 code, so let the assembler emit unaligned vector moves (what Kvazaar's configure.ac does itself when $CC matches *gcc)
+        CC="gcc -m64" CFLAGS="-m64 -DKVZ_STATIC_LIB -O2 -Wa,-muse-unaligned-vector-move" ./configure --prefix=$INSTALL_PATH --disable-shared --enable-static --host=x86_64-w64-mingw32
         make -j $MAKEJ V=0
         make install
         cd ../ffmpeg-$FFMPEG_VERSION
